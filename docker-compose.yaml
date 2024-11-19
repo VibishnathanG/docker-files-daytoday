@@ -3,7 +3,8 @@ services:
   ngnix1:
     image: ngnix
     port: 8080:80
-  networks: mynet
+  networks: 
+    - mynet
   ngnix2:
     image: ngnix
     port: 8081:80
