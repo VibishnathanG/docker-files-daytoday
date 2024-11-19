@@ -1,0 +1,18 @@
+version: '3'
+services:
+  ngnix1:
+    image: ngnix
+    port: 8080:80
+  networks: mynet
+  ngnix2:
+    image: ngnix
+    port: 8081:80
+
+  centos-container:
+    image: centos:latest
+    command: tail -f /dev/null  # Keeps the container running
+
+
+
+
+
