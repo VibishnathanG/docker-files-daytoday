@@ -6,7 +6,7 @@ LABEL maintainer="vibish@gmail.com"
 
 # Update system and install required packages
 RUN yum update -y && \
-    yum install -y iputils bind-utils dnsutils procps-ng net-tools git java-11-openjdk wget && \
+    yum install -y iputils bind-utils procps-ng net-tools git java-11-openjdk wget && \
     yum clean all
 
 # Set environment variables for Tomcat
