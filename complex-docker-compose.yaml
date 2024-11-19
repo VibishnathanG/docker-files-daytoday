@@ -1,0 +1,75 @@
+version: '3.9'  # Specifies the Compose file format version
+
+services:
+  # Web application service
+  webapp:
+    image: nginx:latest  # Uses the official NGINX image
+    container_name: my_nginx  # Assigns a custom name to the container
+    ports:
+      - "8080:80"  # Maps port 8080 on the host to port 80 in the container
+    environment:
+      NGINX_HOST: localhost  # Sets environment variables
+      NGINX_PORT: 80
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d  # Mounts custom NGINX configuration
+    depends_on:
+      - backend  # Ensures the backend service starts before this one
+    networks:
+      - frontend  # Connects to a custom frontend network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]  # Checks container health
+      interval: 30s  # Health check interval
+      timeout: 10s
+      retries: 3
+
+  # Backend application service
+  backend:
+    build:
+      context: ./backend  # Uses the specified directory for the build context
+      dockerfile: Dockerfile  # Specifies a custom Dockerfile
+      args:
+        - APP_ENV=production  # Passes build arguments to the Dockerfile
+    environment:
+      - DB_HOST=database  # Sets environment variables for the backend
+      - DB_PORT=3306
+    volumes:
+      - backend_data:/usr/src/app  # Persistent storage for backend data
+    networks:
+      - backend  # Connects to a custom backend network
+    restart: on-failure  # Automatically restarts the container on failure
+
+  # Database service
+  database:
+    image: mysql:latest  # Uses the official MySQL image
+    container_name: my_database  # Assigns a custom name to the container
+    ports:
+      - "3306:3306"  # Maps the MySQL port
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword  # Sets root password for MySQL
+      MYSQL_DATABASE: mydb  # Creates a default database
+      MYSQL_USER: user  # Creates a user
+      MYSQL_PASSWORD: userpassword  # Sets a password for the user
+    volumes:
+      - db_data:/var/lib/mysql  # Persistent storage for MySQL data
+    networks:
+      - backend  # Connects to the backend network
+
+  # Adminer service for database management
+  adminer:
+    image: adminer:latest  # Uses the Adminer image
+    ports:
+      - "8081:8080"  # Maps port 8081 for Adminer
+    depends_on:
+      - database  # Ensures database starts before Adminer
+    networks:
+      - backend  # Connects to the backend network
+
+networks:
+  frontend:
+    driver: bridge  # Creates a custom bridge network for the frontend
+  backend:
+    driver: bridge  # Creates a custom bridge network for the backend
+
+volumes:
+  db_data:  # Defines a named volume for database persistence
+  backend_data:  # Defines a named volume for backend persistence
