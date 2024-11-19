@@ -19,3 +19,7 @@ services:
     command: tail -f /dev/null  # Keeps the container running
     networks:
       - mynet
+
+networks:
+  mynet:
+    driver: bridge
