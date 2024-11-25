@@ -1,0 +1,9 @@
+version: '3'
+services:
+  ubuntu1:
+    image: vibishnathang/ubuntuwithssh:v1
+    container_name: ubuntu1
+  ubuntu2:
+    image: vibishnathang/ubuntuwithssh:v1
+    container_name: ubuntu2
+
